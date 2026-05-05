@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react'
-import { getRecords, deleteRecord } from '../../services'
-import { useUIStore } from '../../store'
-import { formatAmount, formatDateDisplay, formatTimeDisplay, getCurrentMonth } from '../../utils'
-import type { Record } from '../../types'
+import { getRecords } from '../../../shared/services'
+import { formatAmount, formatDateDisplay, formatTimeDisplay, getCurrentMonth } from '../../../shared/utils'
+import type { RecordItem } from '../../../shared/types'
 
 export function RecordsPage() {
-  const { showToast } = useUIStore()
-  const [records, setRecords] = useState<Record[]>([])
+  const [records, setRecords] = useState<RecordItem[]>([])
   const [currentMonth, setCurrentMonth] = useState(getCurrentMonth())
   const [loading, setLoading] = useState(false)
   const [stats, setStats] = useState({ income: 0, expense: 0 })
@@ -33,16 +31,6 @@ export function RecordsPage() {
     }
   }
 
-  const handleDelete = async (id: number) => {
-    const res = await deleteRecord(id)
-    if (res.code === 0) {
-      showToast('删除成功')
-      loadRecords()
-    } else {
-      showToast(res.message)
-    }
-  }
-
   // 切换月份
   const changeMonth = (direction: number) => {
     const [year, month] = currentMonth.split('-').map(Number)
@@ -59,10 +47,10 @@ export function RecordsPage() {
     }
     groups[date].push(record)
     return groups
-  }, {} as Record<string, Record[]>)
+  }, {} as Record<string, RecordItem[]>)
 
   // 计算每日支出
-  const getDayStats = (dateRecords: Record[]) => {
+  const getDayStats = (dateRecords: RecordItem[]) => {
     const expense = dateRecords
       .filter(r => r.type === 1)
       .reduce((sum, r) => sum + parseFloat(r.amount), 0)

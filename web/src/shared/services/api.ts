@@ -5,7 +5,7 @@ import type {
   User,
   Family,
   Category,
-  Record,
+  RecordItem,
   RecordListResponse,
   StatsOverview,
   CategoryStats,
@@ -92,7 +92,7 @@ export async function removeMember(memberId: number): Promise<ApiResponse<null>>
 // ==================== 记账模块 ====================
 
 // 创建账目
-export async function createRecord(data: CreateRecordRequest): Promise<ApiResponse<Record>> {
+export async function createRecord(data: CreateRecordRequest): Promise<ApiResponse<RecordItem>> {
   return request('/api/record', {
     method: 'POST',
     body: {
@@ -115,7 +115,7 @@ export async function getRecords(params: {
 }
 
 // 获取账目详情
-export async function getRecord(id: number): Promise<ApiResponse<Record>> {
+export async function getRecord(id: number): Promise<ApiResponse<RecordItem>> {
   return request(`/api/record/${id}`)
 }
 
@@ -123,7 +123,7 @@ export async function getRecord(id: number): Promise<ApiResponse<Record>> {
 export async function updateRecord(
   id: number,
   data: UpdateRecordRequest
-): Promise<ApiResponse<Record>> {
+): Promise<ApiResponse<RecordItem>> {
   return request(`/api/record/${id}`, {
     method: 'PUT',
     body: data.amount ? { ...data, amount: parseFloat(data.amount) } : data,

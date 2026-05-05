@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { login, register } from '../../services'
-import { useAuthStore, useUIStore } from '../../store'
-import { validateUsername, validatePhone, validatePassword } from '../../utils'
+import { login, register } from '../../../shared/services'
+import { useAuthStore, useUIStore } from '../../../shared/store'
+import { validateUsername, validatePhone, validatePassword } from '../../../shared/utils'
 
 export function LoginPage() {
   const navigate = useNavigate()

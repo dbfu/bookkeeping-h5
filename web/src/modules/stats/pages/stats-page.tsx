@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
-import { getStatsOverview, getCategoryStats, getTrend } from '../../services'
-import { formatAmount } from '../../utils'
-import type { StatsOverview, CategoryStats, TrendData } from '../../types'
+import { getStatsOverview, getCategoryStats, getTrend } from '../../../shared/services'
+import { formatAmount } from '../../../shared/utils'
+import type { StatsOverview, CategoryStats, TrendData } from '../../../shared/types'
 
 export function StatsPage() {
   const [timeRange, setTimeRange] = useState<'week' | 'month' | 'year'>('month')

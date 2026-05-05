@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useUIStore } from '../../store'
+import { useUIStore } from '../store'
 
 export function Toast() {
   const { toastMessage, hideToast } = useUIStore()

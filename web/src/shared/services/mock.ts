@@ -4,7 +4,7 @@ import type {
   User,
   Family,
   Category,
-  Record,
+  RecordItem,
   RecordListResponse,
   StatsOverview,
   CategoryStats,
@@ -57,7 +57,7 @@ const mockCategories: Category[] = [
   { id: 14, name: '其他收入', type: 2, icon: '📦', color: '#64748B', isDefault: true },
 ]
 
-let mockRecords: Record[] = [
+let mockRecords: RecordItem[] = [
   {
     id: 1,
     amount: '35.00',
@@ -145,12 +145,12 @@ export async function register(data: RegisterRequest): Promise<ApiResponse<Login
 
   // 检查用户名是否已存在
   if (mockUsers.find(u => u.username === data.username)) {
-    return error(2002, '用户名已存在')
+    return { code: 2002, data: null as unknown as LoginResponse, message: '用户名已存在' }
   }
 
   // 检查手机号是否已存在
   if (data.phone && mockUsers.find(u => u.phone === data.phone)) {
-    return error(2002, '手机号已注册')
+    return { code: 2002, data: null as unknown as LoginResponse, message: '手机号已注册' }
   }
 
   // 创建新用户
@@ -173,12 +173,12 @@ export async function login(data: LoginRequest): Promise<ApiResponse<LoginRespon
   // 查找用户
   const user = mockUsers.find(u => u.username === data.username || u.phone === data.username)
   if (!user) {
-    return error(2001, '用户不存在')
+    return { code: 2001, data: null as unknown as LoginResponse, message: '用户不存在' }
   }
 
   // 模拟密码验证（实际应该验证密码）
   if (data.password.length < 6) {
-    return error(1001, '密码错误')
+    return { code: 1001, data: null as unknown as LoginResponse, message: '密码错误' }
   }
 
   const token = `mock_token_${user.id}_${Date.now()}`
@@ -234,11 +234,11 @@ export async function joinFamily(data: JoinFamilyRequest): Promise<ApiResponse<F
   await delay(500)
 
   if (data.inviteCode !== mockFamily.inviteCode) {
-    return error(2005, '邀请码无效')
+    return { code: 2005, data: null as unknown as Family, message: '邀请码无效' }
   }
 
   if (mockUsers[0].familyId) {
-    return error(2006, '已加入家庭')
+    return { code: 2006, data: null as unknown as Family, message: '已加入家庭' }
   }
 
   mockUsers[0].familyId = mockFamily.id
@@ -261,11 +261,11 @@ export async function removeMember(memberId: number): Promise<ApiResponse<null>>
 // ==================== 记账模块 ====================
 
 // 创建账目
-export async function createRecord(data: CreateRecordRequest): Promise<ApiResponse<Record>> {
+export async function createRecord(data: CreateRecordRequest): Promise<ApiResponse<RecordItem>> {
   await delay(300)
 
   const category = mockCategories.find(c => c.id === data.categoryId)!
-  const newRecord: Record = {
+  const newRecord: RecordItem = {
     id: recordIdCounter++,
     amount: data.amount,
     type: data.type,
@@ -307,21 +307,21 @@ export async function getRecords(params: {
 }
 
 // 获取账目详情
-export async function getRecord(id: number): Promise<ApiResponse<Record>> {
+export async function getRecord(id: number): Promise<ApiResponse<RecordItem>> {
   await delay(200)
   const record = mockRecords.find(r => r.id === id)
   if (!record) {
-    return error(1001, '账目不存在')
+    return { code: 1001, data: null as unknown as RecordItem, message: '账目不存在' }
   }
   return success(record)
 }
 
 // 更新账目
-export async function updateRecord(id: number, data: UpdateRecordRequest): Promise<ApiResponse<Record>> {
+export async function updateRecord(id: number, data: UpdateRecordRequest): Promise<ApiResponse<RecordItem>> {
   await delay(300)
   const record = mockRecords.find(r => r.id === id)
   if (!record) {
-    return error(1001, '账目不存在')
+    return { code: 1001, data: null as unknown as RecordItem, message: '账目不存在' }
   }
 
   if (data.amount) record.amount = data.amount
@@ -375,7 +375,7 @@ export async function updateCategory(id: number, data: Partial<Category>): Promi
   await delay(300)
   const category = mockCategories.find(c => c.id === id)
   if (!category) {
-    return error(1001, '分类不存在')
+    return { code: 1001, data: null as unknown as Category, message: '分类不存在' }
   }
   Object.assign(category, data)
   return success(category, '更新成功')

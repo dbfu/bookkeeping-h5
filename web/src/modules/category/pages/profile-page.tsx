@@ -1,7 +1,6 @@
-import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useAuthStore, useFamilyStore, useUIStore } from '../../store'
-import { maskPhone } from '../../utils'
+import { useAuthStore, useFamilyStore, useUIStore } from '../../../shared/store'
+import { maskPhone } from '../../../shared/utils'
 
 export function ProfilePage() {
   const navigate = useNavigate()

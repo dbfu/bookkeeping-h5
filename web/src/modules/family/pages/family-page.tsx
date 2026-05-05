@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getFamily, createFamily, joinFamily, removeMember } from '../../services'
-import { useFamilyStore, useAuthStore, useUIStore } from '../../store'
-import { maskPhone } from '../../utils'
-import type { Family } from '../../types'
+import { getFamily, createFamily, joinFamily, removeMember } from '../../../shared/services'
+import { useFamilyStore, useAuthStore, useUIStore } from '../../../shared/store'
+import { maskPhone } from '../../../shared/utils'
 
 export function FamilyPage() {
   const navigate = useNavigate()

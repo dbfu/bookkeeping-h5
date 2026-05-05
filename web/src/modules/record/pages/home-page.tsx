@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { getStatsOverview, getRecords, getCategories } from '../../services'
-import { useAuthStore, useFamilyStore, useCategoryStore, useUIStore } from '../../store'
+import { getStatsOverview, getRecords, getCategories } from '../../../shared/services'
+import { useAuthStore, useFamilyStore, useCategoryStore, useUIStore } from '../../../shared/store'
 import { FABButton } from '../../../shared/components'
-import { formatAmount, formatDateDisplay, formatTimeDisplay, getCurrentMonth } from '../../utils'
-import type { StatsOverview, Record, Category } from '../../types'
+import { formatAmount, formatDateDisplay, formatTimeDisplay, getCurrentMonth } from '../../../shared/utils'
+import type { StatsOverview, RecordItem, Category } from '../../../shared/types'
 
 export function HomePage() {
   const { user } = useAuthStore()
@@ -13,7 +13,7 @@ export function HomePage() {
   const { setCategories } = useCategoryStore()
 
   const [stats, setStats] = useState<StatsOverview | null>(null)
-  const [records, setRecords] = useState<Record[]>([])
+  const [records, setRecords] = useState<RecordItem[]>([])
   const [categories, setLocalCategories] = useState<Category[]>([])
   const [currentMonth] = useState(getCurrentMonth())
 
@@ -54,7 +54,7 @@ export function HomePage() {
     }
     groups[date].push(record)
     return groups
-  }, {} as Record<string, Record[]>)
+  }, {} as Record<string, RecordItem[]>)
 
   return (
     <div className="min-h-screen bg-dark-bg pb-24">

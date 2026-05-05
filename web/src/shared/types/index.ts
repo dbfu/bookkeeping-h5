@@ -49,7 +49,7 @@ export interface Category {
 }
 
 // 账目类型
-export interface Record {
+export interface RecordItem {
   id: number
   amount: string
   type: 1 | 2 // 1: 支出, 2: 收入
@@ -65,7 +65,7 @@ export interface Record {
 
 // 账目列表响应
 export interface RecordListResponse {
-  list: Record[]
+  list: RecordItem[]
   total: number
   page: number
   size: number

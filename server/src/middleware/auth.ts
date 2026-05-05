@@ -2,11 +2,15 @@ import type { FastifyRequest, FastifyReply } from 'fastify'
 import type { UserPayload } from '../types'
 import { error, ErrorCode } from '../utils/response'
 
+// 扩展 FastifyRequest 类型
 declare module 'fastify' {
   interface FastifyRequest {
     user?: UserPayload
   }
 }
+
+// 重新导出类型以确保类型合并
+export {}
 
 /**
  * JWT 认证中间件

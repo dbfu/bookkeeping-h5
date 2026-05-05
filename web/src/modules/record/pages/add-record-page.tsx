@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { createRecord, getCategories } from '../../services'
-import { useCategoryStore, useUIStore } from '../../store'
-import { formatDate, validateAmount } from '../../utils'
-import type { Category } from '../../types'
+import { createRecord, getCategories } from '../../../shared/services'
+import { useCategoryStore, useUIStore } from '../../../shared/store'
+import { formatDate, validateAmount } from '../../../shared/utils'
+import type { Category } from '../../../shared/types'
 
 export function AddRecordPage() {
   const navigate = useNavigate()

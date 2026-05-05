@@ -1,5 +1,6 @@
 // API 基础配置
-const API_BASE_URL = 'http://localhost:3000'
+// 使用代理方式访问接口，所有 /api/* 请求由 Vite 开发服务器代理或 Nginx 反向代理转发到后端
+const API_BASE_URL = ''
 
 // 获取 Token
 function getToken(): string | null {
@@ -59,4 +60,4 @@ async function request<T>(
   return data
 }
 
-export { request, getToken }
+export { request, getToken, API_BASE_URL }
