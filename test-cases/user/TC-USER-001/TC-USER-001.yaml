@@ -1,0 +1,92 @@
+# TC-USER-001 手机号验证码登录
+# 用户模块 - 测试用例
+
+id: TC-USER-001
+title: 手机号验证码登录
+version: 1.0
+priority: P0
+module: user
+tags: [login, auth, phone, P0]
+
+created_at: 2026-05-05
+updated_at: 2026-05-05
+status: active
+
+history:
+  - version: 1.0
+    date: 2026-05-05
+    author: 测试团队
+    change: 初始创建
+
+preconditions:
+  - 用户未登录状态
+  - 应用已启动，处于登录页面
+  - 手机号可正常接收短信验证码
+
+steps:
+  - action: 点击"手机号登录"入口
+    expected: 显示手机号输入页面
+  - action: 输入有效的11位手机号（如：13800138000）
+    expected: 手机号输入框显示完整号码，"获取验证码"按钮可点击
+  - action: 点击"获取验证码"按钮
+    expected: |
+      1. 按钮开始60秒倒计时
+      2. 手机收到验证码短信
+      3. 验证码输入框获得焦点
+  - action: 输入正确的6位验证码
+    expected: 验证码输入框显示完整验证码
+  - action: 点击"登录"按钮
+    expected: |
+      1. 登录成功
+      2. 跳转到首页
+      3. 显示用户信息
+
+expected_results:
+  - 用户成功登录系统
+  - 用户Token正确存储
+  - 首页显示用户信息
+
+assertions:
+  - type: ui
+    description: 登录成功提示
+    validate:
+      - 页面显示登录成功提示或直接跳转首页
+  - type: state
+    description: 用户登录状态
+    validate:
+      - localStorage/sessionStorage 中存在有效 Token
+      - 用户信息正确显示
+  - type: navigation
+    description: 页面跳转
+    validate:
+      - 当前页面为首页或引导页
+
+test_data:
+  - case: 有效手机号
+    phone: "13800138000"
+    code: "123456"
+  - case: 边界手机号
+    phone: "13000000000"
+    code: "654321"
+
+error_cases:
+  - case: 手机号为空
+    action: 不输入手机号，点击获取验证码
+    expected: 提示"请输入手机号"
+  - case: 手机号格式错误
+    action: 输入"12345"，点击获取验证码
+    expected: 提示"请输入正确的手机号"
+  - case: 验证码为空
+    action: 不输入验证码，点击登录
+    expected: 提示"请输入验证码"
+  - case: 验证码错误
+    action: 输入错误验证码"000000"
+    expected: 提示"验证码错误"
+  - case: 验证码过期
+    action: 输入已过期的验证码
+    expected: 提示"验证码已过期，请重新获取"
+
+notes: |
+  - 验证码有效期默认为5分钟
+  - 60秒倒计时期间不可再次获取验证码
+  - 需测试iOS和Android两个平台

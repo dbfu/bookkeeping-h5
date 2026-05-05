@@ -1,0 +1,89 @@
+# TC-USER-006 成员权限管理
+# 用户模块 - 测试用例
+
+id: TC-USER-006
+title: 成员权限管理
+version: 1.0
+priority: P1
+module: user
+tags: [family, permission, admin, P1]
+
+created_at: 2026-05-05
+updated_at: 2026-05-05
+status: active
+
+history:
+  - version: 1.0
+    date: 2026-05-05
+    author: 测试团队
+    change: 初始创建
+
+preconditions:
+  - 用户已登录且为家庭管理员
+  - 家庭中至少有2名成员（1管理员+1普通成员）
+
+steps:
+  - action: 进入"家庭详情"页面
+    expected: 显示所有家庭成员列表
+  - action: 点击普通成员的头像或昵称
+    expected: 显示成员详情和操作选项
+  - action: 验证管理员权限
+    expected: |
+      管理员可执行：
+      1. 邀请新成员
+      2. 移除成员
+      3. 转让管理员
+  - action: 验证普通成员权限
+    expected: |
+      普通成员可执行：
+      1. 查看家庭信息
+      2. 记账
+      3. 查看统计
+      普通成员不可执行：
+      1. 邀请成员
+      2. 移除成员
+      3. 修改家庭信息
+
+expected_results:
+  - 管理员权限正确
+  - 普通成员权限正确
+  - 权限控制生效
+
+assertions:
+  - type: ui
+    description: 管理员界面
+    validate:
+      - 管理员可见"邀请成员"按钮
+      - 管理员可见"移除成员"按钮
+      - 管理员可见"转让管理员"按钮
+  - type: ui
+    description: 普通成员界面
+    validate:
+      - 普通成员不可见管理操作按钮
+      - 普通成员尝试管理操作时提示无权限
+  - type: api
+    description: 接口权限控制
+    validate:
+      - 普通成员调用管理接口返回403
+      - 管理员调用管理接口正常
+
+test_data:
+  - case: 管理员用户
+    role: admin
+    permissions: ["invite", "remove", "transfer", "view", "edit"]
+  - case: 普通成员
+    role: member
+    permissions: ["view", "edit"]
+
+error_cases:
+  - case: 普通成员尝试邀请
+    action: 普通成员点击邀请
+    expected: 提示"仅管理员可执行此操作"
+  - case: 普通成员尝试移除
+    action: 普通成员尝试移除成员
+    expected: 提示"仅管理员可执行此操作"
+
+notes: |
+  - 管理员权限：邀请、移除、转让管理员
+  - 普通成员权限：记账、查看统计、查看账目
+  - 需测试权限边界情况

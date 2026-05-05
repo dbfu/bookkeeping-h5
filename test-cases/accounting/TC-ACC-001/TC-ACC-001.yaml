@@ -1,0 +1,104 @@
+# TC-ACC-001 快速记账-支出
+# 记账模块 - 测试用例
+
+id: TC-ACC-001
+title: 快速记账-支出
+version: 1.0
+priority: P0
+module: accounting
+tags: [record, expense, P0]
+
+created_at: 2026-05-05
+updated_at: 2026-05-05
+status: active
+
+history:
+  - version: 1.0
+    date: 2026-05-05
+    author: 测试团队
+    change: 初始创建
+
+preconditions:
+  - 用户已登录
+  - 用户已加入家庭
+  - 首页正常显示
+
+steps:
+  - action: 点击首页底部悬浮记账按钮
+    expected: |
+      1. 弹出记账面板
+      2. 默认选中"支出"类型
+      3. 数字键盘自动弹出
+  - action: 输入金额（如：35.50）
+    expected: 金额显示正确，支持小数点
+  - action: 选择支出分类（如：餐饮美食）
+    expected: 分类图标高亮选中
+  - action: （可选）输入备注（如：午餐）
+    expected: 备注输入框显示内容
+  - action: 点击"确认"按钮
+    expected: |
+      1. 显示记账成功提示
+      2. 面板关闭
+      3. 首页数据更新
+
+expected_results:
+  - 支出记录保存成功
+  - 金额、分类、备注正确
+  - 首页统计数据更新
+
+assertions:
+  - type: ui
+    description: 记账成功提示
+    validate:
+      - 显示"记账成功"提示
+      - 面板关闭
+  - type: state
+    description: 数据验证
+    validate:
+      - 数据库中存在对应记录
+      - 类型为"支出"
+      - 金额正确（35.50）
+      - 分类正确（餐饮美食）
+      - 时间为当前时间
+  - type: ui
+    description: 首页更新
+    validate:
+      - 今日支出金额增加
+      - 账目列表显示新记录
+
+test_data:
+  - case: 正常支出
+    amount: 35.50
+    category: "餐饮美食"
+    remark: "午餐"
+  - case: 整数金额
+    amount: 100
+    category: "交通出行"
+    remark: ""
+  - case: 大额支出
+    amount: 9999.99
+    category: "购物消费"
+    remark: "家电"
+
+error_cases:
+  - case: 金额为空
+    action: 不输入金额，直接点击确认
+    expected: 提示"请输入金额"
+  - case: 金额为0
+    action: 输入金额0
+    expected: 提示"金额必须大于0"
+  - case: 金额过大
+    action: 输入金额999999999
+    expected: 提示"金额超出限制"
+  - case: 未选择分类
+    action: 输入金额后不选分类，点击确认
+    expected: 提示"请选择分类"
+  - case: 金额格式错误
+    action: 输入"abc"
+    expected: 无法输入非数字字符
+
+notes: |
+  - 金额支持小数点后两位
+  - 金额上限为999999.99
+  - 记账时间默认为当前时间
+  - 3秒内完成记账操作

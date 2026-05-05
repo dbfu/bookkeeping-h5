@@ -1,0 +1,94 @@
+# TC-USER-005 通过邀请码加入家庭
+# 用户模块 - 测试用例
+
+id: TC-USER-005
+title: 通过邀请码加入家庭
+version: 1.0
+priority: P0
+module: user
+tags: [family, join, invite-code, P0]
+
+created_at: 2026-05-05
+updated_at: 2026-05-05
+status: active
+
+history:
+  - version: 1.0
+    date: 2026-05-05
+    author: 测试团队
+    change: 初始创建
+
+preconditions:
+  - 用户已登录
+  - 用户未加入任何家庭
+  - 存在有效的家庭邀请码
+
+steps:
+  - action: 进入"我的家庭"页面
+    expected: 显示"创建家庭"和"加入家庭"两个选项
+  - action: 点击"加入家庭"按钮
+    expected: 显示邀请码输入页面
+  - action: 输入有效的6位邀请码
+    expected: 邀请码输入框显示完整邀请码
+  - action: 点击"确认加入"按钮
+    expected: |
+      1. 显示家庭信息预览（家庭名称、成员数）
+      2. 显示"确认加入"按钮
+  - action: 点击"确认加入"
+    expected: |
+      1. 加入成功提示
+      2. 跳转到家庭详情页
+      3. 用户角色显示为"成员"
+
+expected_results:
+  - 成功加入家庭
+  - 用户角色为普通成员
+  - 家庭成员列表正确更新
+
+assertions:
+  - type: ui
+    description: 加入成功显示
+    validate:
+      - 显示加入成功提示
+      - 家庭详情页显示新成员
+      - 用户角色显示为"成员"
+  - type: state
+    description: 数据库验证
+    validate:
+      - 用户与家庭关联正确
+      - 用户角色字段为 member
+      - 家庭成员数量+1
+  - type: business
+    description: 业务规则
+    validate:
+      - 用户只能加入一个家庭
+      - 加入后可查看家庭所有账目
+
+test_data:
+  - case: 正常邀请码
+    code: "ABC123"
+    family_name: "测试家庭"
+  - case: 邀请链接加入
+    link: "https://app.com/join?code=ABC123"
+
+error_cases:
+  - case: 邀请码为空
+    action: 不输入邀请码，点击确认
+    expected: 提示"请输入邀请码"
+  - case: 邀请码格式错误
+    action: 输入"123"
+    expected: 提示"请输入6位邀请码"
+  - case: 邀请码不存在
+    action: 输入"000000"
+    expected: 提示"邀请码不存在"
+  - case: 邀请码已过期
+    action: 输入过期邀请码
+    expected: 提示"邀请码已过期"
+  - case: 已加入家庭
+    action: 已有家庭的用户尝试加入
+    expected: 提示"您已加入家庭，无法重复加入"
+
+notes: |
+  - 邀请码有效期7天
+  - 通过链接加入时自动填充邀请码
+  - 需测试邀请链接在微信中打开的情况

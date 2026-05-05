@@ -1,0 +1,93 @@
+# TC-ACC-006 账目搜索筛选
+# 记账模块 - 测试用例
+
+id: TC-ACC-006
+title: 账目搜索筛选
+version: 1.0
+priority: P1
+module: accounting
+tags: [search, filter, P1]
+
+created_at: 2026-05-05
+updated_at: 2026-05-05
+status: active
+
+history:
+  - version: 1.0
+    date: 2026-05-05
+    author: 测试团队
+    change: 初始创建
+
+preconditions:
+  - 用户已登录
+  - 家庭中存在多条不同类型的账目记录
+
+steps:
+  - action: 进入"账目"页面
+    expected: 显示账目列表
+  - action: 点击搜索图标
+    expected: 显示搜索输入框
+  - action: 输入关键词（如：午餐）
+    expected: 列表实时过滤，显示备注包含"午餐"的账目
+  - action: 点击筛选按钮
+    expected: 显示筛选面板
+  - action: 选择分类筛选（如：餐饮美食）
+    expected: 列表只显示该分类的账目
+  - action: 选择成员筛选
+    expected: 列表只显示该成员的账目
+  - action: 选择时间范围
+    expected: 列表只显示该时间段的账目
+  - action: 点击"重置"按钮
+    expected: 清除所有筛选条件，显示全部账目
+
+expected_results:
+  - 搜索功能正常
+  - 筛选功能正常
+  - 组合筛选正常
+
+assertions:
+  - type: ui
+    description: 搜索功能
+    validate:
+      - 输入关键词后列表实时过滤
+      - 搜索范围包括备注、分类名称
+      - 无结果时显示空状态
+  - type: ui
+    description: 筛选功能
+    validate:
+      - 分类筛选正确
+      - 成员筛选正确
+      - 时间范围筛选正确
+  - type: ui
+    description: 组合筛选
+    validate:
+      - 多个筛选条件同时生效
+      - 筛选条件显示在顶部
+
+test_data:
+  - case: 关键词搜索
+    keyword: "午餐"
+    expected_count: 5
+  - case: 分类筛选
+    category: "餐饮美食"
+    expected_count: 10
+  - case: 成员筛选
+    member: "成员A"
+    expected_count: 8
+  - case: 时间范围
+    start_date: "2026-05-01"
+    end_date: "2026-05-31"
+    expected_count: 20
+
+error_cases:
+  - case: 搜索无结果
+    action: 输入不存在的关键词
+    expected: 显示"未找到相关账目"
+  - case: 筛选条件冲突
+    action: 选择不存在的组合条件
+    expected: 显示空状态
+
+notes: |
+  - 搜索支持模糊匹配
+  - 筛选条件可组合使用
+  - 筛选状态在页面切换后保持

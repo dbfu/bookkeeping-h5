@@ -1,0 +1,93 @@
+# TC-CAT-003 编辑自定义分类
+# 分类模块 - 测试用例
+
+id: TC-CAT-003
+title: 编辑自定义分类
+version: 1.0
+priority: P0
+module: category
+tags: [edit, custom, P0]
+
+created_at: 2026-05-05
+updated_at: 2026-05-05
+status: active
+
+history:
+  - version: 1.0
+    date: 2026-05-05
+    author: 测试团队
+    change: 初始创建
+
+preconditions:
+  - 用户已登录
+  - 存在自定义分类
+
+steps:
+  - action: 进入"分类管理"页面
+    expected: 显示分类列表
+  - action: 点击目标自定义分类
+    expected: 显示分类详情和编辑选项
+  - action: 点击"编辑"按钮
+    expected: 进入编辑模式
+  - action: 修改分类名称
+    expected: 名称输入框显示新名称
+  - action: 修改分类图标
+    expected: 图标更新
+  - action: 修改分类颜色
+    expected: 颜色更新
+  - action: 点击"保存"按钮
+    expected: |
+      1. 显示保存成功提示
+      2. 分类列表更新
+      3. 已有账目的分类信息同步更新
+
+expected_results:
+  - 分类修改成功
+  - 修改内容正确保存
+  - 历史账目分类信息更新
+
+assertions:
+  - type: ui
+    description: 编辑成功提示
+    validate:
+      - 显示"保存成功"提示
+      - 分类列表显示更新后的分类
+  - type: state
+    description: 数据验证
+    validate:
+      - 数据库中分类记录已更新
+      - 分类名称、图标、颜色正确
+  - type: ui
+    description: 历史账目更新
+    validate:
+      - 使用该分类的账目显示新图标和颜色
+
+test_data:
+  - case: 修改名称
+    original:
+      name: "宠物开销"
+    modified:
+      name: "宠物用品"
+  - case: 修改图标
+    original:
+      icon: "pet"
+    modified:
+      icon: "cat"
+  - case: 修改颜色
+    original:
+      color: "#FF6B6B"
+    modified:
+      color: "#4ECDC4"
+
+error_cases:
+  - case: 编辑预设分类
+    action: 尝试编辑预设分类
+    expected: 提示"预设分类不可编辑"或编辑按钮不可点击
+  - case: 名称重复
+    action: 修改为已存在的名称
+    expected: 提示"分类名称已存在"
+
+notes: |
+  - 预设分类不可编辑
+  - 编辑分类后历史账目同步更新
+  - 分类类型不可修改

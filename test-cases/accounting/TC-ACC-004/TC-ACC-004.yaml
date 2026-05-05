@@ -1,0 +1,98 @@
+# TC-ACC-004 账目编辑
+# 记账模块 - 测试用例
+
+id: TC-ACC-004
+title: 账目编辑
+version: 1.0
+priority: P0
+module: accounting
+tags: [edit, update, P0]
+
+created_at: 2026-05-05
+updated_at: 2026-05-05
+status: active
+
+history:
+  - version: 1.0
+    date: 2026-05-05
+    author: 测试团队
+    change: 初始创建
+
+preconditions:
+  - 用户已登录
+  - 存在已记录的账目
+
+steps:
+  - action: 进入"账目"页面
+    expected: 显示账目列表
+  - action: 点击目标账目条目
+    expected: 进入账目详情页
+  - action: 点击"编辑"按钮
+    expected: 进入编辑模式，显示编辑表单
+  - action: 修改金额（如：35.50 → 40.00）
+    expected: 金额输入框显示新金额
+  - action: 修改分类（如：餐饮美食 → 交通出行）
+    expected: 分类选择更新
+  - action: 修改备注
+    expected: 备注内容更新
+  - action: 点击"保存"按钮
+    expected: |
+      1. 显示保存成功提示
+      2. 返回账目详情页
+      3. 显示更新后的信息
+
+expected_results:
+  - 账目修改成功
+  - 修改内容正确保存
+  - 统计数据同步更新
+
+assertions:
+  - type: ui
+    description: 编辑成功提示
+    validate:
+      - 显示"保存成功"提示
+      - 详情页显示更新后的数据
+  - type: state
+    description: 数据验证
+    validate:
+      - 数据库中记录已更新
+      - 更新时间记录正确
+  - type: ui
+    description: 统计更新
+    validate:
+      - 首页统计数据同步更新
+      - 分类统计数据更新
+
+test_data:
+  - case: 修改金额
+    original:
+      amount: 35.50
+      category: "餐饮美食"
+    modified:
+      amount: 40.00
+  - case: 修改分类
+    original:
+      category: "餐饮美食"
+    modified:
+      category: "交通出行"
+  - case: 修改备注
+    original:
+      remark: "午餐"
+    modified:
+      remark: "晚餐"
+
+error_cases:
+  - case: 金额修改为0
+    action: 将金额修改为0
+    expected: 提示"金额必须大于0"
+  - case: 金额修改为空
+    action: 清空金额后保存
+    expected: 提示"请输入金额"
+  - case: 网络异常
+    action: 网络断开时保存
+    expected: 提示"保存失败，请重试"
+
+notes: |
+  - 支持修改金额、分类、备注、时间
+  - 编辑记录保留修改历史
+  - 家庭成员可编辑自己的账目

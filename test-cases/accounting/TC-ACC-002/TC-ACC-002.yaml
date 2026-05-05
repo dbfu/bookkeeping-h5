@@ -1,0 +1,94 @@
+# TC-ACC-002 快速记账-收入
+# 记账模块 - 测试用例
+
+id: TC-ACC-002
+title: 快速记账-收入
+version: 1.0
+priority: P0
+module: accounting
+tags: [record, income, P0]
+
+created_at: 2026-05-05
+updated_at: 2026-05-05
+status: active
+
+history:
+  - version: 1.0
+    date: 2026-05-05
+    author: 测试团队
+    change: 初始创建
+
+preconditions:
+  - 用户已登录
+  - 用户已加入家庭
+  - 首页正常显示
+
+steps:
+  - action: 点击首页底部悬浮记账按钮
+    expected: 弹出记账面板，默认选中"支出"
+  - action: 切换到"收入"类型
+    expected: |
+      1. 类型切换为"收入"
+      2. 分类列表显示收入分类
+  - action: 输入金额（如：5000）
+    expected: 金额显示正确
+  - action: 选择收入分类（如：工资薪酬）
+    expected: 分类图标高亮选中
+  - action: （可选）输入备注（如：5月工资）
+    expected: 备注输入框显示内容
+  - action: 点击"确认"按钮
+    expected: |
+      1. 显示记账成功提示
+      2. 面板关闭
+      3. 首页数据更新
+
+expected_results:
+  - 收入记录保存成功
+  - 金额、分类、备注正确
+  - 首页统计数据更新
+
+assertions:
+  - type: ui
+    description: 类型切换
+    validate:
+      - 点击"收入"后分类列表更新
+      - 显示收入分类：工资薪酬、投资理财、兼职副业、奖金红包、其他收入
+  - type: state
+    description: 数据验证
+    validate:
+      - 数据库中存在对应记录
+      - 类型为"收入"
+      - 金额正确（5000）
+      - 分类正确（工资薪酬）
+  - type: ui
+    description: 首页更新
+    validate:
+      - 本月收入金额增加
+      - 本月结余增加
+
+test_data:
+  - case: 工资收入
+    amount: 10000
+    category: "工资薪酬"
+    remark: "月工资"
+  - case: 理财收入
+    amount: 500.50
+    category: "投资理财"
+    remark: "基金收益"
+  - case: 奖金收入
+    amount: 2000
+    category: "奖金红包"
+    remark: "年终奖"
+
+error_cases:
+  - case: 金额为空
+    action: 不输入金额，直接点击确认
+    expected: 提示"请输入金额"
+  - case: 未选择分类
+    action: 输入金额后不选分类
+    expected: 提示"请选择分类"
+
+notes: |
+  - 收入分类与支出分类独立
+  - 切换类型时分类列表自动更新
+  - 收入金额显示为绿色/正数

@@ -1,0 +1,89 @@
+# TC-CAT-001 预设分类显示
+# 分类模块 - 测试用例
+
+id: TC-CAT-001
+title: 预设分类显示
+version: 1.0
+priority: P0
+module: category
+tags: [preset, view, P0]
+
+created_at: 2026-05-05
+updated_at: 2026-05-05
+status: active
+
+history:
+  - version: 1.0
+    date: 2026-05-05
+    author: 测试团队
+    change: 初始创建
+
+preconditions:
+  - 用户已登录
+  - 用户已加入家庭
+
+steps:
+  - action: 点击记账按钮
+    expected: 显示记账面板
+  - action: 查看支出分类列表
+    expected: 显示预设支出分类
+  - action: 切换到收入类型
+    expected: 显示预设收入分类
+  - action: 进入"分类管理"页面
+    expected: 显示所有分类列表
+
+expected_results:
+  - 支出预设分类正确显示
+  - 收入预设分类正确显示
+  - 分类图标和名称正确
+
+assertions:
+  - type: ui
+    description: 支出分类显示
+    validate:
+      - 显示预设支出分类：餐饮美食、交通出行、购物消费、生活缴费、休闲娱乐、医疗健康、教育培训、人情往来、其他支出
+      - 每个分类显示图标和名称
+  - type: ui
+    description: 收入分类显示
+    validate:
+      - 显示预设收入分类：工资薪酬、投资理财、兼职副业、奖金红包、其他收入
+      - 每个分类显示图标和名称
+
+test_data:
+  - case: 支出预设分类
+    categories:
+      - name: "餐饮美食"
+        icon: "food"
+      - name: "交通出行"
+        icon: "transport"
+      - name: "购物消费"
+        icon: "shopping"
+      - name: "生活缴费"
+        icon: "utility"
+      - name: "休闲娱乐"
+        icon: "entertainment"
+      - name: "医疗健康"
+        icon: "health"
+      - name: "教育培训"
+        icon: "education"
+      - name: "人情往来"
+        icon: "gift"
+      - name: "其他支出"
+        icon: "other"
+  - case: 收入预设分类
+    categories:
+      - name: "工资薪酬"
+        icon: "salary"
+      - name: "投资理财"
+        icon: "investment"
+      - name: "兼职副业"
+        icon: "parttime"
+      - name: "奖金红包"
+        icon: "bonus"
+      - name: "其他收入"
+        icon: "other"
+
+notes: |
+  - 预设分类不可删除
+  - 预设分类图标固定
+  - 分类按预设顺序排列

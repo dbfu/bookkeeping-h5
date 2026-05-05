@@ -1,0 +1,74 @@
+# TC-USER-008 用户退出登录
+# 用户模块 - 测试用例
+
+id: TC-USER-008
+title: 用户退出登录
+version: 1.0
+priority: P0
+module: user
+tags: [logout, auth, P0]
+
+created_at: 2026-05-05
+updated_at: 2026-05-05
+status: active
+
+history:
+  - version: 1.0
+    date: 2026-05-05
+    author: 测试团队
+    change: 初始创建
+
+preconditions:
+  - 用户已登录
+  - 用户在任意页面
+
+steps:
+  - action: 进入"我的"或"设置"页面
+    expected: 显示用户信息和"退出登录"按钮
+  - action: 点击"退出登录"按钮
+    expected: 显示确认弹窗，提示退出后果
+  - action: 点击"确认退出"
+    expected: |
+      1. 退出成功
+      2. 清除本地用户数据
+      3. 跳转到登录页面
+
+expected_results:
+  - 用户退出成功
+  - 本地数据已清除
+  - 跳转到登录页面
+
+assertions:
+  - type: ui
+    description: 退出成功显示
+    validate:
+      - 当前页面为登录页面
+      - 不显示用户信息
+  - type: state
+    description: 数据清除验证
+    validate:
+      - localStorage/sessionStorage 中 Token 已清除
+      - 用户信息已清除
+  - type: navigation
+    description: 页面跳转
+    validate:
+      - 访问需要登录的页面时重定向到登录页
+
+test_data:
+  - case: 正常退出
+    user: "已登录用户"
+  - case: 有未同步数据
+    user: "有本地未同步数据"
+
+error_cases:
+  - case: 取消退出
+    action: 点击退出后点击取消
+    expected: 保持在当前页面，不退出
+  - case: 网络异常
+    action: 网络异常时退出
+    expected: 本地退出成功，下次登录同步数据
+
+notes: |
+  - 退出登录需二次确认
+  - 本地缓存数据需清除
+  - 如有未同步数据，需提示用户

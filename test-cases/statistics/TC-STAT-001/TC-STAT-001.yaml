@@ -1,0 +1,92 @@
+# TC-STAT-001 收支概览统计
+# 统计模块 - 测试用例
+
+id: TC-STAT-001
+title: 收支概览统计
+version: 1.0
+priority: P0
+module: statistics
+tags: [overview, summary, P0]
+
+created_at: 2026-05-05
+updated_at: 2026-05-05
+status: active
+
+history:
+  - version: 1.0
+    date: 2026-05-05
+    author: 测试团队
+    change: 初始创建
+
+preconditions:
+  - 用户已登录
+  - 用户已加入家庭
+  - 本月存在收支记录
+
+steps:
+  - action: 进入"统计"页面
+    expected: 显示收支概览卡片
+  - action: 查看本月收入
+    expected: 显示本月总收入金额
+  - action: 查看本月支出
+    expected: 显示本月总支出金额
+  - action: 查看本月结余
+    expected: 显示本月收入-支出的结余金额
+  - action: 切换时间范围（本周/本月/本年）
+    expected: 数据按选择的时间范围更新
+
+expected_results:
+  - 收入统计正确
+  - 支出统计正确
+  - 结余计算正确
+  - 时间范围切换正常
+
+assertions:
+  - type: ui
+    description: 收入显示
+    validate:
+      - 本月收入金额正确显示
+      - 金额格式正确（如：¥5,000.00）
+  - type: ui
+    description: 支出显示
+    validate:
+      - 本月支出金额正确显示
+      - 金额格式正确
+  - type: calculation
+    description: 结余计算
+    validate:
+      - 结余 = 收入 - 支出
+      - 结余为负时显示红色/负号
+  - type: ui
+    description: 时间范围切换
+    validate:
+      - 本周：显示本周数据
+      - 本月：显示本月数据
+      - 本年：显示本年数据
+
+test_data:
+  - case: 正收支
+    income: 10000
+    expense: 5000
+    balance: 5000
+  - case: 负收支
+    income: 3000
+    expense: 5000
+    balance: -2000
+  - case: 无收支
+    income: 0
+    expense: 0
+    balance: 0
+
+error_cases:
+  - case: 无数据
+    action: 新用户查看统计
+    expected: 显示"暂无数据"，金额为0
+  - case: 网络异常
+    action: 网络断开时加载统计
+    expected: 显示网络错误提示
+
+notes: |
+  - 统计数据实时更新
+  - 支持本周/本月/本年切换
+  - 家庭模式下统计所有成员数据

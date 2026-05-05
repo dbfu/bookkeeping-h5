@@ -1,0 +1,91 @@
+# TC-STAT-002 分类统计饼图
+# 统计模块 - 测试用例
+
+id: TC-STAT-002
+title: 分类统计饼图
+version: 1.0
+priority: P0
+module: statistics
+tags: [chart, pie, category, P0]
+
+created_at: 2026-05-05
+updated_at: 2026-05-05
+status: active
+
+history:
+  - version: 1.0
+    date: 2026-05-05
+    author: 测试团队
+    change: 初始创建
+
+preconditions:
+  - 用户已登录
+  - 用户已加入家庭
+  - 存在多个分类的收支记录
+
+steps:
+  - action: 进入"统计"页面
+    expected: 显示分类统计区域
+  - action: 查看支出分类饼图
+    expected: |
+      1. 显示饼图
+      2. 各分类按金额占比显示
+      3. 分类颜色与设置一致
+  - action: 点击饼图某个分类
+    expected: 显示该分类详细金额和占比
+  - action: 切换到收入分类饼图
+    expected: 显示收入分类饼图
+  - action: 查看分类列表
+    expected: 按金额排序显示各分类
+
+expected_results:
+  - 饼图正确显示
+  - 分类占比正确
+  - 点击交互正常
+
+assertions:
+  - type: ui
+    description: 饼图显示
+    validate:
+      - 饼图正确渲染
+      - 各分类扇区颜色正确
+      - 分类名称和图标显示
+  - type: calculation
+    description: 占比计算
+    validate:
+      - 各分类占比 = 分类金额 / 总金额
+      - 占比总和 = 100%
+  - type: ui
+    description: 点击交互
+    validate:
+      - 点击扇区显示详情
+      - 详情包含金额和占比
+
+test_data:
+  - case: 多分类支出
+    categories:
+      - name: "餐饮美食"
+        amount: 1000
+        percent: 20
+      - name: "交通出行"
+        amount: 500
+        percent: 10
+      - name: "购物消费"
+        amount: 2000
+        percent: 40
+      - name: "其他支出"
+        amount: 1500
+        percent: 30
+
+error_cases:
+  - case: 无分类数据
+    action: 无账目时查看饼图
+    expected: 显示空状态或提示"暂无数据"
+  - case: 单分类数据
+    action: 只有一个分类有数据
+    expected: 饼图显示100%为该分类
+
+notes: |
+  - 饼图使用分类设置的颜色
+  - 占比按金额计算
+  - 支持支出和收入分类切换

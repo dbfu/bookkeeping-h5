@@ -1,0 +1,86 @@
+# TC-USER-004 邀请成员加入家庭
+# 用户模块 - 测试用例
+
+id: TC-USER-004
+title: 邀请成员加入家庭
+version: 1.0
+priority: P0
+module: user
+tags: [family, invite, share, P0]
+
+created_at: 2026-05-05
+updated_at: 2026-05-05
+status: active
+
+history:
+  - version: 1.0
+    date: 2026-05-05
+    author: 测试团队
+    change: 初始创建
+
+preconditions:
+  - 用户已登录且为家庭管理员
+  - 家庭已创建
+
+steps:
+  - action: 进入"家庭详情"页面
+    expected: 显示家庭成员列表和"邀请成员"按钮
+  - action: 点击"邀请成员"按钮
+    expected: 显示邀请方式选择弹窗
+  - action: 选择"生成邀请码"
+    expected: |
+      1. 显示6位邀请码
+      2. 提供"复制邀请码"按钮
+  - action: 点击"复制邀请码"
+    expected: 提示"邀请码已复制"
+  - action: 选择"分享邀请链接"
+    expected: |
+      1. 调起微信分享
+      2. 分享链接包含邀请参数
+
+expected_results:
+  - 邀请码生成成功
+  - 邀请链接可正常分享
+  - 被邀请人可通过邀请加入
+
+assertions:
+  - type: ui
+    description: 邀请码显示
+    validate:
+      - 邀请码为6位数字/字母组合
+      - 复制按钮可点击
+  - type: state
+    description: 邀请记录
+    validate:
+      - 数据库中存在邀请记录
+      - 邀请码与家庭关联正确
+      - 邀请码有效期正确（默认7天）
+  - type: business
+    description: 分享功能
+    validate:
+      - 微信分享可正常调起
+      - 分享链接格式正确
+
+test_data:
+  - case: 有效邀请码
+    code: "ABC123"
+    expire_days: 7
+  - case: 即将过期邀请码
+    code: "XYZ789"
+    expire_days: 1
+
+error_cases:
+  - case: 邀请码已过期
+    action: 使用过期邀请码
+    expected: 提示"邀请码已过期"
+  - case: 邀请码无效
+    action: 输入不存在的邀请码
+    expected: 提示"邀请码不存在"
+  - case: 非管理员邀请
+    action: 普通成员点击邀请
+    expected: 提示"仅管理员可邀请成员"
+
+notes: |
+  - 邀请码有效期默认7天
+  - 邀请码可重复使用（在有效期内）
+  - 需测试微信分享功能

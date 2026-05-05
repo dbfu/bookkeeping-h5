@@ -1,0 +1,87 @@
+# TC-STAT-004 成员贡献排行
+# 统计模块 - 测试用例
+
+id: TC-STAT-004
+title: 成员贡献排行
+version: 1.0
+priority: P0
+module: statistics
+tags: [member, ranking, family, P0]
+
+created_at: 2026-05-05
+updated_at: 2026-05-05
+status: active
+
+history:
+  - version: 1.0
+    date: 2026-05-05
+    author: 测试团队
+    change: 初始创建
+
+preconditions:
+  - 用户已登录
+  - 用户已加入家庭
+  - 家庭有多个成员
+  - 各成员有记账记录
+
+steps:
+  - action: 进入"统计"页面
+    expected: 显示成员贡献区域
+  - action: 查看成员贡献排行
+    expected: |
+      1. 显示家庭成员列表
+      2. 按记账金额排序
+      3. 显示各成员头像、昵称、金额
+  - action: 查看记账笔数统计
+    expected: 显示各成员记账笔数
+  - action: 点击成员详情
+    expected: 显示该成员的详细统计
+
+expected_results:
+  - 成员排行正确显示
+  - 排序正确
+  - 详细统计可查看
+
+assertions:
+  - type: ui
+    description: 排行显示
+    validate:
+      - 显示所有家庭成员
+      - 每个成员显示头像、昵称
+      - 显示记账金额或笔数
+  - type: calculation
+    description: 排序正确
+    validate:
+      - 按记账金额降序排列
+      - 或按记账笔数降序排列
+  - type: ui
+    description: 详情查看
+    validate:
+      - 点击成员可查看详细统计
+      - 详情包含该成员的收支分类
+
+test_data:
+  - case: 多成员家庭
+    members:
+      - name: "成员A"
+        amount: 5000
+        count: 20
+      - name: "成员B"
+        amount: 3000
+        count: 15
+      - name: "成员C"
+        amount: 2000
+        count: 10
+
+error_cases:
+  - case: 单成员家庭
+    action: 只有管理员的家庭
+    expected: 显示管理员自己的统计
+  - case: 成员无记账
+    action: 成员未记账
+    expected: 该成员显示金额为0
+
+notes: |
+  - 家庭模式下显示所有成员
+  - 可切换按金额或笔数排序
+  - 支持查看成员详细统计

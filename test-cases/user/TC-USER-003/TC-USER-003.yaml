@@ -1,0 +1,84 @@
+# TC-USER-003 创建家庭
+# 用户模块 - 测试用例
+
+id: TC-USER-003
+title: 创建家庭
+version: 1.0
+priority: P0
+module: user
+tags: [family, create, admin, P0]
+
+created_at: 2026-05-05
+updated_at: 2026-05-05
+status: active
+
+history:
+  - version: 1.0
+    date: 2026-05-05
+    author: 测试团队
+    change: 初始创建
+
+preconditions:
+  - 用户已登录
+  - 用户未加入任何家庭
+
+steps:
+  - action: 进入"我的家庭"页面
+    expected: 显示"创建家庭"和"加入家庭"两个选项
+  - action: 点击"创建家庭"按钮
+    expected: 显示创建家庭表单
+  - action: 输入家庭名称（如："我的家"）
+    expected: 家庭名称输入框显示输入内容
+  - action: 点击"确认创建"按钮
+    expected: |
+      1. 创建成功提示
+      2. 自动跳转到家庭详情页
+      3. 当前用户显示为"管理员"角色
+
+expected_results:
+  - 家庭创建成功
+  - 创建者自动成为管理员
+  - 家庭信息正确显示
+
+assertions:
+  - type: ui
+    description: 家庭创建成功
+    validate:
+      - 显示创建成功提示
+      - 家庭详情页显示家庭名称
+      - 用户角色显示为"管理员"
+  - type: state
+    description: 家庭数据
+    validate:
+      - 数据库中存在对应家庭记录
+      - 用户与家庭关联正确
+      - 用户角色字段为 admin
+  - type: business
+    description: 业务规则验证
+    validate:
+      - 用户只能创建一个家庭
+      - 创建者自动成为管理员
+
+test_data:
+  - case: 正常家庭名称
+    name: "我的家"
+  - case: 最短名称
+    name: "家"
+  - case: 最长名称
+    name: "这是一个很长的家庭名称测试最多二十个字"
+
+error_cases:
+  - case: 家庭名称为空
+    action: 不输入名称，点击确认创建
+    expected: 提示"请输入家庭名称"
+  - case: 家庭名称过长
+    action: 输入超过20个字符的名称
+    expected: 提示"家庭名称不能超过20个字符"
+  - case: 重复创建家庭
+    action: 已有家庭的用户再次创建
+    expected: 提示"您已加入家庭，无法重复创建"
+
+notes: |
+  - 家庭名称限制：1-20个字符
+  - 每个用户只能创建/加入一个家庭
+  - 需测试特殊字符输入情况

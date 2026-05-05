@@ -1,0 +1,80 @@
+# TC-USER-002 微信授权登录
+# 用户模块 - 测试用例
+
+id: TC-USER-002
+title: 微信授权登录
+version: 1.0
+priority: P0
+module: user
+tags: [login, auth, wechat, P0]
+
+created_at: 2026-05-05
+updated_at: 2026-05-05
+status: active
+
+history:
+  - version: 1.0
+    date: 2026-05-05
+    author: 测试团队
+    change: 初始创建
+
+preconditions:
+  - 用户未登录状态
+  - 应用在微信内置浏览器中打开，或已安装微信客户端
+  - 微信账号已绑定手机号
+
+steps:
+  - action: 点击"微信登录"按钮
+    expected: |
+      1. 微信内置浏览器：弹出授权确认页面
+      2. 外部浏览器：跳转到微信授权页面
+  - action: 在微信授权页面点击"确认登录"
+    expected: |
+      1. 授权成功
+      2. 自动返回应用
+      3. 完成登录
+  - action: 查看登录状态
+    expected: |
+      1. 显示用户微信头像和昵称
+      2. 跳转到首页
+
+expected_results:
+  - 微信授权成功
+  - 用户信息正确获取（头像、昵称）
+  - 登录状态正确保存
+
+assertions:
+  - type: ui
+    description: 用户信息显示
+    validate:
+      - 首页显示用户微信头像
+      - 首页显示用户微信昵称
+  - type: state
+    description: 登录状态
+    validate:
+      - 存在有效的用户Token
+      - 用户信息包含微信openId
+
+test_data:
+  - case: 已注册微信用户
+    openid: "mock_openid_001"
+    nickname: "测试用户A"
+  - case: 新微信用户
+    openid: "mock_openid_002"
+    nickname: "新用户"
+
+error_cases:
+  - case: 用户取消授权
+    action: 在微信授权页面点击"取消"
+    expected: 返回应用，提示"授权已取消"
+  - case: 微信未安装
+    action: 在未安装微信的设备点击微信登录
+    expected: 提示"请先安装微信客户端"
+  - case: 微信授权超时
+    action: 授权页面停留超时
+    expected: 提示"授权超时，请重试"
+
+notes: |
+  - 需在微信内置浏览器和外部浏览器分别测试
+  - 首次微信登录需引导用户绑定手机号
+  - 测试微信账号未绑定手机号的情况

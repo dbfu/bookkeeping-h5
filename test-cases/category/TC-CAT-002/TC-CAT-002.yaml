@@ -1,0 +1,95 @@
+# TC-CAT-002 新增自定义分类
+# 分类模块 - 测试用例
+
+id: TC-CAT-002
+title: 新增自定义分类
+version: 1.0
+priority: P0
+module: category
+tags: [create, custom, P0]
+
+created_at: 2026-05-05
+updated_at: 2026-05-05
+status: active
+
+history:
+  - version: 1.0
+    date: 2026-05-05
+    author: 测试团队
+    change: 初始创建
+
+preconditions:
+  - 用户已登录
+  - 用户已加入家庭
+
+steps:
+  - action: 进入"分类管理"页面
+    expected: 显示分类列表和"添加分类"按钮
+  - action: 点击"添加分类"按钮
+    expected: 显示新增分类表单
+  - action: 选择分类类型（支出/收入）
+    expected: 类型选中
+  - action: 输入分类名称（如：宠物开销）
+    expected: 名称输入框显示内容
+  - action: 选择分类图标
+    expected: 图标选中高亮
+  - action: 选择分类颜色
+    expected: 颜色选中
+  - action: 点击"保存"按钮
+    expected: |
+      1. 显示保存成功提示
+      2. 分类列表更新
+      3. 新分类出现在列表中
+
+expected_results:
+  - 自定义分类创建成功
+  - 分类信息正确保存
+  - 记账时可选择新分类
+
+assertions:
+  - type: ui
+    description: 创建成功提示
+    validate:
+      - 显示"添加成功"提示
+      - 分类列表显示新分类
+  - type: state
+    description: 数据验证
+    validate:
+      - 数据库中存在新分类记录
+      - 分类类型、名称、图标、颜色正确
+      - 分类标记为自定义
+  - type: ui
+    description: 记账使用
+    validate:
+      - 记账面板分类列表包含新分类
+
+test_data:
+  - case: 支出自定义分类
+    type: "expense"
+    name: "宠物开销"
+    icon: "pet"
+    color: "#FF6B6B"
+  - case: 收入自定义分类
+    type: "income"
+    name: "租金收入"
+    icon: "rent"
+    color: "#4ECDC4"
+
+error_cases:
+  - case: 名称为空
+    action: 不输入名称，点击保存
+    expected: 提示"请输入分类名称"
+  - case: 名称重复
+    action: 输入已存在的分类名称
+    expected: 提示"分类名称已存在"
+  - case: 名称过长
+    action: 输入超过10个字符的名称
+    expected: 提示"分类名称不能超过10个字符"
+  - case: 未选择图标
+    action: 不选择图标，点击保存
+    expected: 提示"请选择分类图标"
+
+notes: |
+  - 分类名称限制：1-10个字符
+  - 自定义分类数量上限：20个
+  - 图标从预设图标库选择

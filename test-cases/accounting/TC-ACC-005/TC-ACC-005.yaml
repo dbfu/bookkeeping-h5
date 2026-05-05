@@ -1,0 +1,86 @@
+# TC-ACC-005 账目删除
+# 记账模块 - 测试用例
+
+id: TC-ACC-005
+title: 账目删除
+version: 1.0
+priority: P0
+module: accounting
+tags: [delete, remove, P0]
+
+created_at: 2026-05-05
+updated_at: 2026-05-05
+status: active
+
+history:
+  - version: 1.0
+    date: 2026-05-05
+    author: 测试团队
+    change: 初始创建
+
+preconditions:
+  - 用户已登录
+  - 存在已记录的账目
+
+steps:
+  - action: 进入"账目"页面
+    expected: 显示账目列表
+  - action: 左滑目标账目条目
+    expected: 显示"编辑"和"删除"按钮
+  - action: 点击"删除"按钮
+    expected: 显示删除确认弹窗
+  - action: 点击"确认删除"
+    expected: |
+      1. 显示删除成功提示
+      2. 账目从列表中移除
+      3. 统计数据更新
+
+expected_results:
+  - 账目删除成功
+  - 列表正确更新
+  - 统计数据同步更新
+
+assertions:
+  - type: ui
+    description: 删除成功提示
+    validate:
+      - 显示"删除成功"提示
+      - 列表中不再显示该账目
+  - type: state
+    description: 数据验证
+    validate:
+      - 数据库中记录标记为已删除或物理删除
+  - type: ui
+    description: 统计更新
+    validate:
+      - 首页收支金额更新
+      - 分类统计更新
+
+test_data:
+  - case: 删除支出记录
+    record:
+      type: "expense"
+      amount: 35.50
+      category: "餐饮美食"
+  - case: 删除收入记录
+    record:
+      type: "income"
+      amount: 5000
+      category: "工资薪酬"
+
+error_cases:
+  - case: 取消删除
+    action: 点击删除后点击取消
+    expected: 弹窗关闭，账目保留
+  - case: 网络异常
+    action: 网络断开时删除
+    expected: 提示"删除失败，请重试"
+  - case: 删除他人账目
+    action: 尝试删除家庭成员的账目
+    expected: 根据权限设置，可能提示"无权删除他人账目"
+
+notes: |
+  - 删除需二次确认
+  - 支持左滑删除和详情页删除两种方式
+  - 删除后统计数据实时更新
+  - 考虑是否支持撤销删除

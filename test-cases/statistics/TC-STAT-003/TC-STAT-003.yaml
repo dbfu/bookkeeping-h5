@@ -1,0 +1,93 @@
+# TC-STAT-003 收支趋势图表
+# 统计模块 - 测试用例
+
+id: TC-STAT-003
+title: 收支趋势图表
+version: 1.0
+priority: P0
+module: statistics
+tags: [chart, trend, line, P0]
+
+created_at: 2026-05-05
+updated_at: 2026-05-05
+status: active
+
+history:
+  - version: 1.0
+    date: 2026-05-05
+    author: 测试团队
+    change: 初始创建
+
+preconditions:
+  - 用户已登录
+  - 用户已加入家庭
+  - 存在近6个月的收支记录
+
+steps:
+  - action: 进入"统计"页面
+    expected: 显示收支趋势区域
+  - action: 查看趋势折线图
+    expected: |
+      1. 显示近6个月数据
+      2. 收入和支出两条线
+      3. X轴为月份，Y轴为金额
+  - action: 点击图表某个月份
+    expected: 显示该月详细收支数据
+  - action: 查看数据点
+    expected: 每个月份显示收入和支出数据点
+
+expected_results:
+  - 折线图正确显示
+  - 数据点正确
+  - 点击交互正常
+
+assertions:
+  - type: ui
+    description: 折线图显示
+    validate:
+      - 收入线显示（如绿色）
+      - 支出线显示（如红色）
+      - X轴显示近6个月份
+      - Y轴显示金额刻度
+  - type: calculation
+    description: 数据正确
+    validate:
+      - 每月数据点金额正确
+      - 数据与账目记录一致
+  - type: ui
+    description: 点击交互
+    validate:
+      - 点击数据点显示详情
+      - 详情包含月份、收入、支出、结余
+
+test_data:
+  - case: 6个月数据
+    months:
+      - month: "2026-01"
+        income: 8000
+        expense: 5000
+      - month: "2026-02"
+        income: 8000
+        expense: 6000
+      - month: "2026-03"
+        income: 9000
+        expense: 5500
+      - month: "2026-04"
+        income: 8500
+        expense: 7000
+      - month: "2026-05"
+        income: 10000
+        expense: 5000
+
+error_cases:
+  - case: 无历史数据
+    action: 新用户查看趋势
+    expected: 显示空状态或提示"暂无历史数据"
+  - case: 数据不足6个月
+    action: 只有2个月数据
+    expected: 显示已有月份的数据
+
+notes: |
+  - 默认显示近6个月数据
+  - 收入和支出用不同颜色区分
+  - 支持点击查看月度详情

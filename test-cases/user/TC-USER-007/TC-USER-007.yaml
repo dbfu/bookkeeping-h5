@@ -1,0 +1,85 @@
+# TC-USER-007 移除家庭成员
+# 用户模块 - 测试用例
+
+id: TC-USER-007
+title: 移除家庭成员
+version: 1.0
+priority: P1
+module: user
+tags: [family, remove, admin, P1]
+
+created_at: 2026-05-05
+updated_at: 2026-05-05
+status: active
+
+history:
+  - version: 1.0
+    date: 2026-05-05
+    author: 测试团队
+    change: 初始创建
+
+preconditions:
+  - 用户已登录且为家庭管理员
+  - 家庭中至少有2名成员
+  - 被移除成员为普通成员（非管理员）
+
+steps:
+  - action: 进入"家庭详情"页面
+    expected: 显示所有家庭成员列表
+  - action: 点击目标成员的头像或昵称
+    expected: 显示成员详情和操作选项
+  - action: 点击"移除成员"按钮
+    expected: 显示确认弹窗，提示移除后果
+  - action: 点击"确认移除"
+    expected: |
+      1. 移除成功提示
+      2. 成员列表更新，不再显示该成员
+      3. 被移除成员收到通知
+
+expected_results:
+  - 成员移除成功
+  - 成员列表正确更新
+  - 被移除成员数据保留但无法访问
+
+assertions:
+  - type: ui
+    description: 移除成功显示
+    validate:
+      - 显示移除成功提示
+      - 成员列表中不再显示该成员
+      - 家庭成员数量-1
+  - type: state
+    description: 数据库验证
+    validate:
+      - 用户与家庭关联已删除
+      - 被移除成员的历史账目保留
+      - 被移除成员状态更新
+  - type: notification
+    description: 通知验证
+    validate:
+      - 被移除成员收到系统通知
+
+test_data:
+  - case: 移除普通成员
+    member_id: "user_002"
+    member_name: "测试成员A"
+  - case: 移除有账目记录的成员
+    member_id: "user_003"
+    member_name: "测试成员B"
+    has_records: true
+
+error_cases:
+  - case: 移除管理员自己
+    action: 管理员尝试移除自己
+    expected: 提示"不能移除自己，请先转让管理员"
+  - case: 普通成员尝试移除
+    action: 普通成员尝试移除其他成员
+    expected: 提示"仅管理员可执行此操作"
+  - case: 移除不存在的成员
+    action: 移除已离开的成员
+    expected: 提示"该成员已不在家庭中"
+
+notes: |
+  - 移除成员后，其历史账目保留
+  - 被移除成员可重新加入其他家庭
+  - 需确认弹窗提示移除后果

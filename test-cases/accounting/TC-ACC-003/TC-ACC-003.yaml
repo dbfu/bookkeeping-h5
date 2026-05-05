@@ -1,0 +1,94 @@
+# TC-ACC-003 账目列表查看
+# 记账模块 - 测试用例
+
+id: TC-ACC-003
+title: 账目列表查看
+version: 1.0
+priority: P0
+module: accounting
+tags: [list, view, filter, P0]
+
+created_at: 2026-05-05
+updated_at: 2026-05-05
+status: active
+
+history:
+  - version: 1.0
+    date: 2026-05-05
+    author: 测试团队
+    change: 初始创建
+
+preconditions:
+  - 用户已登录
+  - 用户已加入家庭
+  - 家庭中存在多条账目记录
+
+steps:
+  - action: 进入"账目"页面
+    expected: |
+      1. 显示账目列表
+      2. 按日期分组显示
+      3. 时间倒序排列
+  - action: 查看单条账目信息
+    expected: 显示分类图标、备注、金额、时间
+  - action: 点击月份筛选器
+    expected: 显示月份选择弹窗
+  - action: 选择特定月份
+    expected: 列表更新为该月账目
+  - action: 下拉刷新列表
+    expected: 列表刷新，显示最新数据
+  - action: 上拉加载更多
+    expected: 加载历史账目
+
+expected_results:
+  - 账目列表正确显示
+  - 筛选功能正常
+  - 分页加载正常
+
+assertions:
+  - type: ui
+    description: 列表显示
+    validate:
+      - 账目按日期分组
+      - 每组显示日期和当日收支小计
+      - 每条显示分类图标、备注、金额
+      - 支出金额显示负号/红色，收入显示正号/绿色
+  - type: ui
+    description: 筛选功能
+    validate:
+      - 月份筛选器可正常选择
+      - 选择后列表正确过滤
+  - type: performance
+    description: 加载性能
+    validate:
+      - 首次加载时间 < 1秒
+      - 分页加载流畅
+
+test_data:
+  - case: 多条账目
+    records:
+      - date: "2026-05-05"
+        type: "expense"
+        amount: 35.50
+        category: "餐饮美食"
+      - date: "2026-05-05"
+        type: "expense"
+        amount: 100
+        category: "交通出行"
+      - date: "2026-05-04"
+        type: "income"
+        amount: 5000
+        category: "工资薪酬"
+
+error_cases:
+  - case: 无账目数据
+    action: 新用户查看账目列表
+    expected: 显示"暂无账目记录"空状态
+  - case: 网络异常
+    action: 网络断开时加载列表
+    expected: 显示网络错误提示，可重试
+
+notes: |
+  - 默认显示当月账目
+  - 支持按月份、分类、成员筛选
+  - 支持下拉刷新和上拉加载更多
