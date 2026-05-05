@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  phone     String?  @unique @db.VarChar(20)
+  nickname  String?  @db.VarChar(50)
+  avatar    String?  @db.VarChar(255)
+  openid    String?  @unique @db.VarChar(100)
+  familyId  Int?     @map("family_id")
+  family    Family?  @relation(fields: [familyId], references: [id])
+  records   Record[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Family {
+  id         Int        @id @default(autoincrement())
+  name       String     @db.VarChar(50)
+  inviteCode String     @unique @map("invite_code") @db.VarChar(20)
+  members    User[]
+  records    Record[]
+  categories Category[]
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @updatedAt @map("updated_at")
+
+  @@map("families")
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(20)
+  type      Int
+  icon      String   @db.VarChar(50)
+  color     String   @db.VarChar(20)
+  isDefault Boolean  @default(false) @map("is_default")
+  familyId  Int?     @map("family_id")
+  family    Family?  @relation(fields: [familyId], references: [id])
+  records   Record[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("categories")
+}
+
+model Record {
+  id         Int      @id @default(autoincrement())
+  amount     Decimal  @db.Decimal(10, 2)
+  type       Int
+  remark     String?  @db.VarChar(200)
+  recordDate DateTime @map("record_date") @db.Date
+  userId     Int      @map("user_id")
+  user       User     @relation(fields: [userId], references: [id])
+  familyId   Int      @map("family_id")
+  family     Family   @relation(fields: [familyId], references: [id])
+  categoryId Int      @map("category_id")
+  category   Category @relation(fields: [categoryId], references: [id])
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@index([familyId, recordDate])
+  @@index([userId])
+  @@map("records")
+}
