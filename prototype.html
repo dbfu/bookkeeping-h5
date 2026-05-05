@@ -216,7 +216,7 @@
     </div>
   </div>
 
-  <!-- ==================== 页面3: 登录页 ==================== -->
+  <!-- ==================== 页面3: 登录/注册页 ==================== -->
   <div id="page-login" class="page">
     <div class="min-h-screen flex flex-col bg-dark-bg px-6">
       <!-- Header -->
@@ -226,56 +226,90 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
         </div>
-        <h1 class="text-2xl font-bold text-white mb-2">欢迎回来</h1>
-        <p class="text-slate-400">登录开始记账之旅</p>
+        <h1 id="auth-title" class="text-2xl font-bold text-white mb-2">欢迎回来</h1>
+        <p id="auth-subtitle" class="text-slate-400">登录开始记账之旅</p>
       </div>
-      <!-- Login Form -->
+      <!-- Login/Register Form -->
       <div class="flex-1">
-        <!-- Phone Login -->
-        <div id="phone-login-form">
+        <!-- Tabs -->
+        <div class="flex bg-dark-card rounded-2xl p-1 mb-6">
+          <button id="tab-login" onclick="switchAuthTab('login')" class="flex-1 py-3 rounded-xl text-white font-medium bg-primary text-dark-bg transition-colors">
+            登录
+          </button>
+          <button id="tab-register" onclick="switchAuthTab('register')" class="flex-1 py-3 rounded-xl text-slate-400 font-medium transition-colors">
+            注册
+          </button>
+        </div>
+        <!-- Login Form -->
+        <div id="login-form">
           <div class="mb-4">
-            <label class="block text-sm text-slate-400 mb-2">手机号</label>
-            <div class="flex gap-2">
-              <select class="bg-dark-card border border-dark-border rounded-xl px-3 py-3 text-white focus:outline-none focus:border-primary cursor-pointer">
-                <option>+86</option>
-                <option>+852</option>
-                <option>+886</option>
-              </select>
-              <input type="tel" placeholder="请输入手机号" maxlength="11"
-                class="flex-1 bg-dark-card border border-dark-border rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-primary">
-            </div>
+            <label class="block text-sm text-slate-400 mb-2">用户名/手机号</label>
+            <input type="text" id="login-username" placeholder="请输入用户名或手机号"
+              class="w-full bg-dark-card border border-dark-border rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-primary transition-colors">
           </div>
           <div class="mb-6">
-            <label class="block text-sm text-slate-400 mb-2">验证码</label>
-            <div class="flex gap-2">
-              <input type="text" placeholder="请输入验证码" maxlength="6"
-                class="flex-1 bg-dark-card border border-dark-border rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-primary">
-              <button id="send-code-btn" onclick="sendCode()" class="px-4 py-3 bg-dark-card border border-primary text-primary rounded-xl whitespace-nowrap cursor-pointer hover:bg-primary hover:text-dark-bg transition-colors">
-                获取验证码
+            <label class="block text-sm text-slate-400 mb-2">密码</label>
+            <div class="relative">
+              <input type="password" id="login-password" placeholder="请输入密码"
+                class="w-full bg-dark-card border border-dark-border rounded-xl px-4 py-3 pr-12 text-white placeholder-slate-500 focus:outline-none focus:border-primary transition-colors">
+              <button onclick="togglePasswordVisibility('login-password')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 cursor-pointer hover:text-white transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
               </button>
             </div>
           </div>
-          <button onclick="showPage('page-home')" class="w-full py-4 bg-primary text-dark-bg font-semibold rounded-2xl cursor-pointer hover:bg-secondary transition-colors">
+          <button onclick="handleLogin()" class="w-full py-4 bg-primary text-dark-bg font-semibold rounded-2xl cursor-pointer hover:bg-secondary transition-colors">
             登录
           </button>
         </div>
-        <!-- Divider -->
-        <div class="flex items-center gap-4 my-8">
-          <div class="flex-1 h-px bg-dark-border"></div>
-          <span class="text-slate-500 text-sm">其他登录方式</span>
-          <div class="flex-1 h-px bg-dark-border"></div>
+        <!-- Register Form -->
+        <div id="register-form" class="hidden">
+          <div class="mb-4">
+            <label class="block text-sm text-slate-400 mb-2">用户名</label>
+            <input type="text" id="register-username" placeholder="请输入用户名（4-20位字母数字）"
+              class="w-full bg-dark-card border border-dark-border rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-primary transition-colors">
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm text-slate-400 mb-2">手机号（选填）</label>
+            <input type="tel" id="register-phone" placeholder="请输入手机号"
+              class="w-full bg-dark-card border border-dark-border rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-primary transition-colors">
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm text-slate-400 mb-2">密码</label>
+            <div class="relative">
+              <input type="password" id="register-password" placeholder="请输入密码（6-20位）"
+                class="w-full bg-dark-card border border-dark-border rounded-xl px-4 py-3 pr-12 text-white placeholder-slate-500 focus:outline-none focus:border-primary transition-colors">
+              <button onclick="togglePasswordVisibility('register-password')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 cursor-pointer hover:text-white transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="mb-6">
+            <label class="block text-sm text-slate-400 mb-2">确认密码</label>
+            <div class="relative">
+              <input type="password" id="register-confirm" placeholder="请再次输入密码"
+                class="w-full bg-dark-card border border-dark-border rounded-xl px-4 py-3 pr-12 text-white placeholder-slate-500 focus:outline-none focus:border-primary transition-colors">
+              <button onclick="togglePasswordVisibility('register-confirm')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 cursor-pointer hover:text-white transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <button onclick="handleRegister()" class="w-full py-4 bg-primary text-dark-bg font-semibold rounded-2xl cursor-pointer hover:bg-secondary transition-colors">
+            注册
+          </button>
         </div>
-        <!-- WeChat Login -->
-        <button onclick="showPage('page-home')" class="w-full py-4 bg-[#07C160] text-white font-semibold rounded-2xl flex items-center justify-center gap-3 cursor-pointer hover:bg-[#06AD56] transition-colors">
-          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 01.213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 00.167-.054l1.903-1.114a.864.864 0 01.717-.098 10.16 10.16 0 002.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178A1.17 1.17 0 014.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178 1.17 1.17 0 01-1.162-1.178c0-.651.52-1.18 1.162-1.18zm5.34 2.867c-1.797-.052-3.746.512-5.28 1.786-1.72 1.428-2.687 3.72-1.78 6.22.942 2.453 3.666 4.229 6.884 4.229.826 0 1.622-.12 2.361-.336a.722.722 0 01.598.082l1.584.926a.272.272 0 00.14.045c.134 0 .24-.111.24-.247 0-.06-.023-.12-.038-.177l-.327-1.233a.582.582 0 01-.023-.156.49.49 0 01.201-.398C23.024 18.48 24 16.82 24 14.98c0-3.21-2.931-5.837-7.062-6.122zm-2.036 2.96c.535 0 .969.44.969.982a.976.976 0 01-.969.983.976.976 0 01-.969-.983c0-.542.434-.982.97-.982zm4.844 0c.535 0 .969.44.969.982a.976.976 0 01-.969.983.976.976 0 01-.969-.983c0-.542.434-.982.97-.982z"/>
-          </svg>
-          微信一键登录
-        </button>
       </div>
       <!-- Footer -->
       <div class="py-6 text-center">
-        <p class="text-slate-500 text-xs">登录即表示同意 <a href="#" class="text-primary">用户协议</a> 和 <a href="#" class="text-primary">隐私政策</a></p>
+        <p class="text-slate-500 text-xs">登录/注册即表示同意 <a href="#" class="text-primary">用户协议</a> 和 <a href="#" class="text-primary">隐私政策</a></p>
       </div>
     </div>
   </div>
@@ -1201,27 +1235,109 @@
       btn.textContent = onboardingStep === 3 ? '开始使用' : '下一步';
     }
 
-    // ==================== 登录页逻辑 ====================
-    let countdown = 0;
-    function sendCode() {
-      if (countdown > 0) return;
-      countdown = 60;
-      const btn = document.getElementById('send-code-btn');
-      btn.disabled = true;
-      btn.classList.remove('text-primary', 'border-primary');
-      btn.classList.add('text-slate-400', 'border-slate-400');
+    // ==================== 登录/注册页逻辑 ====================
+    let currentAuthMode = 'login';
 
-      const timer = setInterval(() => {
-        countdown--;
-        btn.textContent = `${countdown}s`;
-        if (countdown <= 0) {
-          clearInterval(timer);
-          btn.textContent = '获取验证码';
-          btn.disabled = false;
-          btn.classList.remove('text-slate-400', 'border-slate-400');
-          btn.classList.add('text-primary', 'border-primary');
-        }
-      }, 1000);
+    function switchAuthTab(mode) {
+      currentAuthMode = mode;
+      const loginTab = document.getElementById('tab-login');
+      const registerTab = document.getElementById('tab-register');
+      const loginForm = document.getElementById('login-form');
+      const registerForm = document.getElementById('register-form');
+      const title = document.getElementById('auth-title');
+      const subtitle = document.getElementById('auth-subtitle');
+
+      if (mode === 'login') {
+        loginTab.classList.add('bg-primary', 'text-dark-bg');
+        loginTab.classList.remove('text-slate-400');
+        registerTab.classList.remove('bg-primary', 'text-dark-bg');
+        registerTab.classList.add('text-slate-400');
+        loginForm.classList.remove('hidden');
+        registerForm.classList.add('hidden');
+        title.textContent = '欢迎回来';
+        subtitle.textContent = '登录开始记账之旅';
+      } else {
+        registerTab.classList.add('bg-primary', 'text-dark-bg');
+        registerTab.classList.remove('text-slate-400');
+        loginTab.classList.remove('bg-primary', 'text-dark-bg');
+        loginTab.classList.add('text-slate-400');
+        registerForm.classList.remove('hidden');
+        loginForm.classList.add('hidden');
+        title.textContent = '创建账户';
+        subtitle.textContent = '注册开始记账之旅';
+      }
+    }
+
+    function togglePasswordVisibility(inputId) {
+      const input = document.getElementById(inputId);
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    function handleLogin() {
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value;
+
+      if (!username) {
+        showToast('请输入用户名或手机号');
+        return;
+      }
+      if (!password) {
+        showToast('请输入密码');
+        return;
+      }
+      if (password.length < 6) {
+        showToast('密码长度不能少于6位');
+        return;
+      }
+
+      // 模拟登录成功
+      showToast('登录成功');
+      setTimeout(() => {
+        showPage('page-home');
+      }, 500);
+    }
+
+    function handleRegister() {
+      const username = document.getElementById('register-username').value.trim();
+      const phone = document.getElementById('register-phone').value.trim();
+      const password = document.getElementById('register-password').value;
+      const confirm = document.getElementById('register-confirm').value;
+
+      if (!username) {
+        showToast('请输入用户名');
+        return;
+      }
+      if (username.length < 4 || username.length > 20) {
+        showToast('用户名需要4-20位');
+        return;
+      }
+      if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+        showToast('用户名只能包含字母、数字和下划线');
+        return;
+      }
+      if (phone && !/^1[3-9]\d{9}$/.test(phone)) {
+        showToast('请输入正确的手机号');
+        return;
+      }
+      if (!password) {
+        showToast('请输入密码');
+        return;
+      }
+      if (password.length < 6 || password.length > 20) {
+        showToast('密码需要6-20位');
+        return;
+      }
+      if (password !== confirm) {
+        showToast('两次密码输入不一致');
+        return;
+      }
+
+      // 模拟注册成功
+      showToast('注册成功');
+      setTimeout(() => {
+        switchAuthTab('login');
+        document.getElementById('login-username').value = username;
+      }, 500);
     }
 
     // ==================== 记账页逻辑 ====================
