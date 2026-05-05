@@ -19,6 +19,7 @@
     "@fastify/rate-limit": "^9.0.0",
     "@prisma/client": "^5.10.0",
     "bcrypt": "^5.1.1",
+    "dotenv": "^17.4.2",
     "fastify": "^4.26.0"
   },
   "devDependencies": {

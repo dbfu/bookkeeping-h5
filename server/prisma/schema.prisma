@@ -9,7 +9,9 @@ datasource db {
 
 model User {
   id        Int      @id @default(autoincrement())
+  username  String?  @unique @db.VarChar(50)
   phone     String?  @unique @db.VarChar(20)
+  password  String?  @db.VarChar(255)
   nickname  String?  @db.VarChar(50)
   avatar    String?  @db.VarChar(255)
   openid    String?  @unique @db.VarChar(100)
