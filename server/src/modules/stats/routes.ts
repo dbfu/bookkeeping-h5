@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import * as statsService from './service'
 import { success, error, ErrorCode } from '../../utils/response'
-import { authMiddleware } from '../../middleware/auth'
+import { authMiddleware, getUser } from '../../middleware/auth'
 import { prisma } from '../../lib/prisma'
 
 export async function statsRoutes(fastify: FastifyInstance) {
@@ -10,7 +10,7 @@ export async function statsRoutes(fastify: FastifyInstance) {
     preHandler: authMiddleware,
   }, async (request, reply) => {
     const query = request.query as { month?: string }
-    const userId = request.user!.userId
+    const userId = getUser(request).userId
 
     // 获取用户的家庭ID
     const user = await prisma.user.findUnique({
@@ -35,7 +35,7 @@ export async function statsRoutes(fastify: FastifyInstance) {
     preHandler: authMiddleware,
   }, async (request, reply) => {
     const query = request.query as { month?: string; type?: string }
-    const userId = request.user!.userId
+    const userId = getUser(request).userId
 
     // 获取用户的家庭ID
     const user = await prisma.user.findUnique({
@@ -61,7 +61,7 @@ export async function statsRoutes(fastify: FastifyInstance) {
     preHandler: authMiddleware,
   }, async (request, reply) => {
     const query = request.query as { months?: string }
-    const userId = request.user!.userId
+    const userId = getUser(request).userId
 
     // 获取用户的家庭ID
     const user = await prisma.user.findUnique({
@@ -86,7 +86,7 @@ export async function statsRoutes(fastify: FastifyInstance) {
     preHandler: authMiddleware,
   }, async (request, reply) => {
     const query = request.query as { month?: string }
-    const userId = request.user!.userId
+    const userId = getUser(request).userId
 
     // 获取用户的家庭ID
     const user = await prisma.user.findUnique({

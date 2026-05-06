@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import * as familyService from './service'
 import { success, error, ErrorCode } from '../../utils/response'
-import { authMiddleware } from '../../middleware/auth'
+import { authMiddleware, getUser } from '../../middleware/auth'
 import { prisma } from '../../lib/prisma'
 
 export async function familyRoutes(fastify: FastifyInstance) {
@@ -10,7 +10,7 @@ export async function familyRoutes(fastify: FastifyInstance) {
     preHandler: authMiddleware,
   }, async (request, reply) => {
     const body = request.body as { name: string }
-    const userId = request.user!.userId
+    const userId = getUser(request).userId
 
     if (!body.name || body.name.trim() === '') {
       return reply.status(400).send(error(ErrorCode.PARAM_ERROR, '家庭名称不能为空'))
@@ -32,7 +32,7 @@ export async function familyRoutes(fastify: FastifyInstance) {
   fastify.get('/api/family', {
     preHandler: authMiddleware,
   }, async (request, reply) => {
-    const userId = request.user!.userId
+    const userId = getUser(request).userId
     const result = await familyService.getFamily(userId)
 
     if (!result.success) {
@@ -47,7 +47,7 @@ export async function familyRoutes(fastify: FastifyInstance) {
     preHandler: authMiddleware,
   }, async (request, reply) => {
     const body = request.body as { inviteCode: string }
-    const userId = request.user!.userId
+    const userId = getUser(request).userId
 
     if (!body.inviteCode || body.inviteCode.trim() === '') {
       return reply.status(400).send(error(ErrorCode.PARAM_ERROR, '邀请码不能为空'))
@@ -69,7 +69,7 @@ export async function familyRoutes(fastify: FastifyInstance) {
   fastify.post('/api/family/leave', {
     preHandler: authMiddleware,
   }, async (request, reply) => {
-    const userId = request.user!.userId
+    const userId = getUser(request).userId
     const result = await familyService.leaveFamily(userId)
 
     if (!result.success) {
@@ -83,7 +83,7 @@ export async function familyRoutes(fastify: FastifyInstance) {
   fastify.delete('/api/family/member/:id', {
     preHandler: authMiddleware,
   }, async (request, reply) => {
-    const userId = request.user!.userId
+    const userId = getUser(request).userId
     const params = request.params as { id: string }
     const memberId = parseInt(params.id, 10)
 

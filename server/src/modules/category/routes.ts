@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import * as categoryService from './service'
 import { success, error, ErrorCode } from '../../utils/response'
-import { authMiddleware } from '../../middleware/auth'
+import { authMiddleware, getUser } from '../../middleware/auth'
 import { prisma } from '../../lib/prisma'
 
 export async function categoryRoutes(fastify: FastifyInstance) {
@@ -10,7 +10,7 @@ export async function categoryRoutes(fastify: FastifyInstance) {
     preHandler: authMiddleware,
   }, async (request, reply) => {
     const query = request.query as { type?: string }
-    const userId = request.user!.userId
+    const userId = getUser(request).userId
 
     // 获取用户的家庭ID
     const user = await prisma.user.findUnique({
@@ -29,7 +29,7 @@ export async function categoryRoutes(fastify: FastifyInstance) {
     preHandler: authMiddleware,
   }, async (request, reply) => {
     const body = request.body as { name: string; type: number; icon?: string; color?: string }
-    const userId = request.user!.userId
+    const userId = getUser(request).userId
 
     if (!body.name || body.name.trim() === '') {
       return reply.status(400).send(error(ErrorCode.PARAM_ERROR, '分类名称不能为空'))
@@ -66,7 +66,7 @@ export async function categoryRoutes(fastify: FastifyInstance) {
   }, async (request, reply) => {
     const params = request.params as { id: string }
     const body = request.body as { name?: string; icon?: string; color?: string }
-    const userId = request.user!.userId
+    const userId = getUser(request).userId
 
     const categoryId = parseInt(params.id, 10)
     if (isNaN(categoryId)) {
@@ -93,7 +93,7 @@ export async function categoryRoutes(fastify: FastifyInstance) {
     preHandler: authMiddleware,
   }, async (request, reply) => {
     const params = request.params as { id: string }
-    const userId = request.user!.userId
+    const userId = getUser(request).userId
 
     const categoryId = parseInt(params.id, 10)
     if (isNaN(categoryId)) {

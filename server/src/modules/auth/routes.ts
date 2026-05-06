@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import type { UserPayload } from '../../types'
 import * as authService from './service'
 import { success, error, ErrorCode } from '../../utils/response'
-import { authMiddleware } from '../../middleware/auth'
+import { authMiddleware, getUser } from '../../middleware/auth'
 
 export async function authRoutes(fastify: FastifyInstance) {
   // 用户注册
@@ -70,7 +70,7 @@ export async function authRoutes(fastify: FastifyInstance) {
   fastify.get('/api/user/profile', {
     preHandler: authMiddleware,
   }, async (request, reply) => {
-    const userId = request.user!.userId
+    const userId = getUser(request).userId
     const result = await authService.getUserProfile(userId)
 
     if (!result.success) {
@@ -84,7 +84,7 @@ export async function authRoutes(fastify: FastifyInstance) {
   fastify.put('/api/user/profile', {
     preHandler: authMiddleware,
   }, async (request, reply) => {
-    const userId = request.user!.userId
+    const userId = getUser(request).userId
     const body = request.body as { nickname?: string; avatar?: string }
 
     const result = await authService.updateUserProfile(userId, body)

@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import * as recordService from './service'
 import { success, error, ErrorCode } from '../../utils/response'
-import { authMiddleware } from '../../middleware/auth'
+import { authMiddleware, getUser } from '../../middleware/auth'
 import { prisma } from '../../lib/prisma'
 
 export async function recordRoutes(fastify: FastifyInstance) {
@@ -16,7 +16,7 @@ export async function recordRoutes(fastify: FastifyInstance) {
       remark?: string
       recordDate: string
     }
-    const userId = request.user!.userId
+    const userId = getUser(request).userId
 
     if (!body.amount || !body.type || !body.categoryId || !body.recordDate) {
       return reply.status(400).send(error(ErrorCode.PARAM_ERROR, '缺少必要参数'))
@@ -61,7 +61,7 @@ export async function recordRoutes(fastify: FastifyInstance) {
       categoryId?: string
       userId?: string
     }
-    const userId = request.user!.userId
+    const userId = getUser(request).userId
 
     // 获取用户的家庭ID
     const user = await prisma.user.findUnique({
@@ -91,7 +91,7 @@ export async function recordRoutes(fastify: FastifyInstance) {
     preHandler: authMiddleware,
   }, async (request, reply) => {
     const params = request.params as { id: string }
-    const userId = request.user!.userId
+    const userId = getUser(request).userId
 
     const recordId = parseInt(params.id, 10)
     if (isNaN(recordId)) {
@@ -129,7 +129,7 @@ export async function recordRoutes(fastify: FastifyInstance) {
       remark?: string
       recordDate?: string
     }
-    const userId = request.user!.userId
+    const userId = getUser(request).userId
 
     const recordId = parseInt(params.id, 10)
     if (isNaN(recordId)) {
@@ -160,7 +160,7 @@ export async function recordRoutes(fastify: FastifyInstance) {
     preHandler: authMiddleware,
   }, async (request, reply) => {
     const params = request.params as { id: string }
-    const userId = request.user!.userId
+    const userId = getUser(request).userId
 
     const recordId = parseInt(params.id, 10)
     if (isNaN(recordId)) {
